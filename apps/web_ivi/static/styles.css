@@ -98,51 +98,49 @@ body {
     margin: 0 auto;
     margin-bottom: 40px;
 }
-  
+
 .turn-signal {
-    width: 80px;
-    height: 40px;
+    width: 120px;
+    height: 80px;
     position: relative;
     opacity: 0.3;
     transition: opacity 0.3s ease;
 }
-  
+
 .turn-signal.active {
     opacity: 1;
 }
-  
-.turn-signal .arrow {
-    position: absolute;
+
+.signal-shape {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.turn-signal.left .signal-shape {
+    flex-direction: row;
+}
+
+.turn-signal.right .signal-shape {
+    flex-direction: row-reverse;
+}
+
+.triangle {
     width: 0;
     height: 0;
     border-style: solid;
 }
-  
-.turn-signal.left .arrow {
-    border-width: 20px 34.6px 20px 0;
+
+.turn-signal.left .triangle {
+    border-width: 30px 52px 30px 0;
     border-color: transparent #59F2BF transparent transparent;
 }
-  
-.turn-signal.right .arrow {
-    border-width: 20px 0 20px 34.6px;
+
+.turn-signal.right .triangle {
+    border-width: 30px 0 30px 52px;
     border-color: transparent transparent transparent #59F2BF;
 }
-  
-.turn-signal .arrow:nth-child(1) {
-    left: 0;
-    animation: blink 1s infinite;
-}
-  
-.turn-signal .arrow:nth-child(2) {
-    left: 20px;
-    animation: blink 1s infinite 0.33s;
-}
-  
-.turn-signal .arrow:nth-child(3) {
-    left: 40px;
-    animation: blink 1s infinite 0.66s;
-}
-  
+
 @keyframes blink {
     0%, 100% { opacity: 0.3; }
     50% { opacity: 1; }
