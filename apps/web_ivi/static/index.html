@@ -14,7 +14,44 @@
             <img src="assets/speedometer.svg" width="500px">
             <h2 id="speed-value">n.a.</h2>
         </div>
-        <div id="info-screen">
+        <div id="center">
+            <div id="turn-signals">
+                <div class="turn-signal left">
+                  <div class="arrow"></div>
+                  <div class="arrow"></div>
+                  <div class="arrow"></div>
+                </div>
+                <div class="turn-signal right">
+                  <div class="arrow"></div>
+                  <div class="arrow"></div>
+                  <div class="arrow"></div>
+                </div>
+            </div>
+            <div id="info-screen">
+                <div class="info-content">
+                    <h2>Vehicle Information</h2>
+                    <div class="info-row">
+                        <span class="info-label">Status:</span>
+                        <span class="info-value" id="vehicle-status">Running</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Battery:</span>
+                        <span class="info-value" id="battery-level">80%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Range:</span>
+                        <span class="info-value" id="estimated-range">350 km</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Temperature:</span>
+                        <span class="info-value" id="outside-temp">22°C</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Time:</span>
+                        <span class="info-value" id="current-time">14:30</span>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="torque">
             <img src="assets/torque.svg" width="500px">
