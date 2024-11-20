@@ -17,6 +17,7 @@ import sys, time, json, logging
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
 from ecal.core.publisher import StringPublisher
+from decision_functions import HiddenDangerPeople
 
 logger = logging.getLogger("example_app")
 stdout = logging.StreamHandler(stream=sys.stdout)
@@ -38,15 +39,22 @@ CLASS_LABELS = {
     12: "parking meter",
 }
 
-global_class_ids = []
+global_result_set = []
 
 # Callback for receiving messages
 def object_raw_sub_callback(topic_name, msg, time):
-    global global_class_ids
+    global global_result_set
     try:
         json_msg = json.loads(msg)
-        global_class_ids = json_msg.get("class_ids", [])
-        # print(f"Received: {msg}")
+        class_ids = json_msg.get("class_ids", [])
+        confidences = json_msg.get("confidences", [])
+        xyxy = json_msg.get("xyxy", [])
+
+        global_result_set = [] ######초기화 타이밍 문제
+
+        for i, class_id in enumerate(class_ids):
+            global_result_set.append([class_ids, confidences[i], xyxy[i]])
+        
     except json.JSONDecodeError:
         logger.error(f"Error: Could not decode message: '{msg}'")
     except Exception as e:
@@ -65,17 +73,23 @@ if __name__ == "__main__":
     sub.set_callback(object_raw_sub_callback)
 
     # Create a publisher that listens on the "object_detection_class"
-    pub = StringPublisher("object_detection_class")
+    pub = StringPublisher("hidden_danger_people")
+
     
-    class_ids = global_class_ids
+    result_set = global_result_set
 
     
     # Just don't exit
     try:
         while ecal_core.ok():
-            if global_class_ids:  # Only publish if we have received class IDs
-                pub.send(json.dumps({"class_ids": global_class_ids}))  # Send class_ids as JSON
-                logger.info(f"Published: {global_class_ids}")
+            print("rerere", global_result_set)
+
+            if result_set:  # Only publish if we have received class IDs
+                if HiddenDangerPeople(result_set) == "danger":
+                    pub.send("HiddenDangerPeople")
+                else:
+                    pass
+                logger.info(f"Published: {result_set}")
             else:
                 logger.info("No class IDs to publish yet.")
 
