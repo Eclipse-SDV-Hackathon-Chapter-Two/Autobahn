@@ -65,7 +65,7 @@ if __name__ == "__main__":
     logger.info("Starting example app...")
 
     # Initialize eCAL
-    ecal_core.initialize(sys.argv, "Example App")
+    ecal_core.initialize(sys.argv, "objectdetection_arbiter")
 
     # Create a subscriber that listens on the "object_detection"
     sub = StringSubscriber("object_detection")
@@ -87,9 +87,11 @@ if __name__ == "__main__":
                     logger.info(f"result_set: {result_set}")
                     logger.info(f"Published: danger")
                 else:
-                    pass
+                    pub.send("Safe")
                 
             else:
+                pub.send("Safe")
+                
                 logger.info("No class IDs to publish yet.")
 
             # Wait before the next loop
