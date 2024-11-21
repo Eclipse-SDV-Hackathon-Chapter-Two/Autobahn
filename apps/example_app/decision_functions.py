@@ -38,9 +38,6 @@ def HiddenDangerPeople(data):
                     return "danger"
     return "safe"
 
-
-roi_points = [(0, 450), (0, 600), (450, 350), (550, 350), (1000, 720)]
-
 def IsPointInROI(point, roi_points= [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]):
     roi_array = np.array(roi_points, dtype=np.int32)
     # whether point is in roi
