@@ -13,24 +13,12 @@ function blinkTurnSignal(direction) {
     }, 500);
 }
 
-let leftInterval, rightInterval;
+export function activateTurnSignal(direction) {
+    toggleTurnSignal(direction);
+    blinkTurnSignal(direction);
+}
 
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowLeft') {
-        if (leftInterval) {
-            clearInterval(leftInterval);
-            leftInterval = null;
-            toggleTurnSignal('left');
-        } else {
-            leftInterval = blinkTurnSignal('left');
-        }
-    } else if (event.key === 'ArrowRight') {
-        if (rightInterval) {
-            clearInterval(rightInterval);
-            rightInterval = null;
-            toggleTurnSignal('right');
-        } else {
-            rightInterval = blinkTurnSignal('right');
-        }
-    }
-});
+export function inactivateTurnSignal(direction) {
+    signal.style.opacity = 0.3;
+    toggleTurnSignal(direction);
+}

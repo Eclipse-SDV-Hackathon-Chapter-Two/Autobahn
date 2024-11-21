@@ -26,9 +26,21 @@ eventSourceVehicleDynamics.addEventListener("vehicle-dynamics", function (event)
     vd.updateSpeedAndTorque(speed_km_h);
 });
 
+let isTurnOn = false;
 eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function (event) {
     let raw_data = event.data;
-    console.log(raw_data);
+    console.log("Hidden Danger People: ", raw_data);
+    if (raw_data === "HiddenDangerPeople" && !isTurnOn) {
+        ts.activateTurnSignal('left');
+        ts.activateTurnSignal('right');
+        isTurnOn = true;
+        console.log("Activate Turn Signals");
+    } else if (raw_data === "Safe" && isTurnOn) {
+        ts.inactivateTurnSignal('left');
+        ts.inactivateTurnSignal('right');
+        isTurnOn = false;
+        console.log("Inactivate Turn Signals");
+    }
 });
 
 // ---------- close the connection on error ----------
