@@ -13,10 +13,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import sys, time, json, logging
+import cv2
+import numpy as np
+from utils import bbox_centerpoint
 
-import ecal.core.core as ecal_core
-from ecal.core.subscriber import StringSubscriber
-from ecal.core.publisher import StringPublisher
 
 recent_x_mid = []
 
@@ -26,10 +26,9 @@ def HiddenDangerPeople(data):
     for entry in data:
         class_id, confidence, bbox = entry
         if class_id == 0.0 and confidence >= 0.5:
-            x1, y1, x2, y2 = bbox
-            x_mid = (x1 + x2) / 2
+            x_mid, y_mid = bbox_centerpoint(bbox)
 
-            if 0 <= x_mid <= 640:
+            if 0 <= x_mid <= 800:
                 recent_x_mid.append(x_mid)
                 if len(recent_x_mid) > 3:
                     recent_x_mid.pop(0)
@@ -38,3 +37,10 @@ def HiddenDangerPeople(data):
                    recent_x_mid[0] > recent_x_mid[1] > recent_x_mid[2]:
                     return "danger"
     return "safe"
+
+def IsPointInROI(point, roi_points= [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]):
+    roi_array = np.array(roi_points, dtype=np.int32)
+    # whether point is in roi
+    result = cv2.pointPolygonTest(roi_array, point, False)
+
+    return result >= 0
