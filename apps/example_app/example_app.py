@@ -40,7 +40,7 @@ if __name__ == "__main__":
     ecal_core.initialize(sys.argv, "Example App")
 
     # Create a subscriber that listens on the "traffic_sign_detection"
-    sub = StringSubscriber("object_detection_class")
+    sub = StringSubscriber("hidden_danger_people")
 
     # Set the Callback
     sub.set_callback(callback)
