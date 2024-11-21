@@ -1,9 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from uvicorn import run
+import asyncio
+import shutil
+
 import os
 import sys
 from asyncio import sleep
@@ -26,6 +29,7 @@ stream_handler.setFormatter(log_formatter)
 logger.addHandler(stream_handler)
 
 stop_server_side_event = threading.Event()
+connected_clients = []
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -50,7 +54,12 @@ async def lifespan(_app: FastAPI):
 
 # create a route that delivers the static/index.html file
 app = FastAPI(lifespan=lifespan)
+static_files_with_headers = StaticFiles(directory="static")
+static_files_with_headers.headers = {"Cache-Control": "no-store"}
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+assets_with_headers = StaticFiles(directory="static/assets")
+assets_with_headers.headers = {"Cache-Control": "no-store"}
 app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
 
 app.add_middleware(
@@ -151,6 +160,36 @@ async def execute_shell_script():
     result = subprocess.run(["./static/helloworld.sh"], capture_output=True, text=True)
     logger.info(f"Script output: {result.stdout}")
     return JSONResponse(content={"message": "Shell script executed successfully", "output": result.stdout})
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    """웹소켓 연결 관리"""
+    await websocket.accept()
+    connected_clients.append(websocket)
+    try:
+        while True:
+            await asyncio.sleep(1)  # Keep the connection alive
+    except:
+        connected_clients.remove(websocket)
+
+
+@app.post("/ota")
+async def ota_update():
+    """OTA 업데이트 실행"""
+    # 1. 변경된 파일 복사/배포 (예: S3에서 다운로드 후 덮어쓰기)
+    source_dir = "/web_ivi/updates/static"  # OTA에서 가져온 파일
+    target_dir = "/web_ivi/static"  # 현재 GUI 파일이 있는 디렉토리
+    if os.path.exists(source_dir):
+        shutil.rmtree(target_dir)  # 기존 파일 삭제
+        shutil.copytree(source_dir, target_dir)  # 새로운 파일 복사
+
+    # 2. 클라이언트에 변경 사항 알림
+    message = "OTA update applied!"
+    for client in connected_clients:
+        await client.send_text(message)
+
+    return {"status": "success", "message": message}
+
 
 if __name__ == "__main__":
     run(app, host="0.0.0.0", port=5500)

@@ -6,14 +6,10 @@ LATEST_VERSION_URL="https://${BUCKET_NAME}.s3.us-east-1.amazonaws.com/latest_ver
 UPDATE_URL_BASE="https://${BUCKET_NAME}.s3.us-east-1.amazonaws.com"
 UPDATE_DIR="updates"
 LOCAL_VERSION_FILE="$UPDATE_DIR/current_version.txt"
-TEMP_FILE="$UPDATE_DIR/update.tar.xz"
+TEMP_FILE="$UPDATE_DIR/update.zip"
 
-python3 random.py
-echo "INIT random python"
-
-exec uvicorn main:app --host 0.0.0.0 --port 5959
+uvicorn main:app --host 0.0.0.0 --port 5960 &
 echo "program start"
-
 
 # 최신 버전 가져오기
 LATEST_VERSION=$(curl -s "$LATEST_VERSION_URL")
@@ -36,7 +32,6 @@ else
   echo "Before Init Version Control python"
   python3 version_control.py
   echo "After Init Version Control python"
+
 fi
-
-
-
+wait
