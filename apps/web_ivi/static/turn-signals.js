@@ -1,6 +1,6 @@
 function toggleTurnSignal(direction) {
     const signal = document.querySelector(`.turn-signal.${direction}`);
-    signal.classList.toggle('active');
+    signal.classList.toggle('active', true);
 }
 
 function blinkTurnSignal(direction) {
@@ -14,11 +14,14 @@ function blinkTurnSignal(direction) {
 }
 
 export function activateTurnSignal(direction) {
-    toggleTurnSignal(direction);
-    blinkTurnSignal(direction);
+    const signal = document.querySelector(`.turn-signal.${direction}`);
+    signal.classList.toggle('active', true);
+    return blinkTurnSignal(direction);
 }
 
-export function inactivateTurnSignal(direction) {
+export function inactivateTurnSignal(direction, interval) {
+    const signal = document.querySelector(`.turn-signal.${direction}`);
     signal.style.opacity = 0.3;
-    toggleTurnSignal(direction);
+    signal.classList.toggle('active', false);
+    clearInterval(interval);
 }
