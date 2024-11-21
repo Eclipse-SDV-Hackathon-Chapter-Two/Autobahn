@@ -6,6 +6,7 @@
     <!-- include styles.css -->
     <link rel="stylesheet" type="text/css" href="static/styles.css">
     <!-- <script type="text/javascript" src="static/vehicle-dynamics.js"></script> -->
+    <script type="text/javascript" src="static/firmware-update.js"></script>
     <script type="module" src="static/main.js"></script>
     <script type="module" src="static/ecal.js"></script>
 </head>
@@ -53,6 +54,13 @@
                         <span class="info-label">Time:</span>
                         <span class="info-value" id="current-time">10:22:00 PM</span>
                     </div>
+                </div>
+            </div>
+            <div id="firmware-update">
+                <p>Would you like to<br>update the firmware now?</p>
+                <div class="button-container">
+                    <button class="update-button yes">Yes</button>
+                    <button class="update-button no">No</button>
                 </div>
             </div>
         </div>
