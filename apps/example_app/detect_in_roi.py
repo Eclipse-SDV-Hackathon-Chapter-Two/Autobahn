@@ -77,16 +77,16 @@ if __name__ == "__main__":
                 result_set = global_result_set  # Only publish if we have received class IDs
                 for entry in result_set:
                     class_id, confidence, bbox = entry
-                    center_x, center_y =  bbox_centerpoint(bbox)
-                    center_point = (center_x, center_y)
+                    center_x, below_y =  bbox_centerpoint(bbox)
+                    center_below_point = (center_x, below_y)
 
-                if IsPointInROI(center_point, roi_points= [(0, 450), (0, 600), (450, 350), (550, 350), (1000, 720)]) is True:
-                    in_roi_msg = "PeopleInROI"
-                    pub.send(in_roi_msg)
-                    logger.info(f"Published: {in_roi_msg}")
-                else:
-                    in_roi_msg = "No"
-                    pub.send(in_roi_msg)
+                    if IsPointInROI(center_below_point, roi_points = [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]) is True:
+                        in_roi_msg = "PeopleInROI"
+                        pub.send(in_roi_msg)
+                        logger.info(f"Published: {in_roi_msg}")
+                    else:
+                        in_roi_msg = "No"
+                        pub.send(in_roi_msg)
                 
             else:
                 in_roi_msg = "NO_detection"
