@@ -87,9 +87,13 @@ if __name__ == "__main__":
 
                         pub.send(str(int(angle)))
                         logger.info(f"Published angle: {angle:.2f}")
+
+                    else:
+                        pub.send("Safe")
                         
             else:
                 logger.info("No data to process.")
+                pub.send("Safe")
                 
             global_result_set = []
 
