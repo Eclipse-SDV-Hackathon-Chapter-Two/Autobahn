@@ -18,6 +18,7 @@ import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
 from ecal.core.publisher import StringPublisher
 from decision_functions import HiddenDangerPeople
+from utils import reorganize_yolo_json
 
 logger = logging.getLogger("example_app")
 stdout = logging.StreamHandler(stream=sys.stdout)
@@ -46,15 +47,7 @@ def object_raw_sub_callback(topic_name, msg, time):
     global global_result_set
     try:
         json_msg = json.loads(msg)
-        class_ids = json_msg.get("class_ids", [])
-        confidences = json_msg.get("confidences", [])
-        xyxy = json_msg.get("xyxy", [])
-
-         ######초기화 타이밍 문제
-        global_result_set = []
-
-        for i, class_id in enumerate(class_ids):
-            global_result_set.append([class_ids[i], confidences[i], xyxy[i]])
+        global_result_set = reorganize_yolo_json(json_msg)
         
     except json.JSONDecodeError:
         logger.error(f"Error: Could not decode message: '{msg}'")
