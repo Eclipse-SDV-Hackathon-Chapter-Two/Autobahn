@@ -16,6 +16,7 @@ import subprocess
 
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
+from ecal.core.publisher import StringPublisher
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -26,6 +27,9 @@ stream_handler.setFormatter(log_formatter)
 logger.addHandler(stream_handler)
 
 stop_server_side_event = threading.Event()
+
+# OTA
+pub = None
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -145,6 +149,102 @@ async def hidden_danger_people():
         # Finalize eCAL API
         ecal_core.finalize()
     return StreamingResponse(hidden_danger_people_generator(), media_type="text/event-stream")
+
+@app.get("/calculated_angle")
+async def calculated_angle():
+    """
+    Asynchronous function to handle vehicle dynamics data streaming to the client browser.
+
+    This function initializes the eCAL API, subscribes to the "calculated_angle" topic,
+    and sets a callback to handle incoming messages. It uses an asynchronous generator
+    to yield vehicle dynamics data as server-sent events (SSE).
+
+    Returns:
+        StreamingResponse: A streaming response with vehicle dynamics data in SSE format.
+    """
+    async def calculated_angle_generator():
+        calculated_angle_queue = Queue() # Already synchronized queue
+
+        # Define an ecal callback triggered when receiving data through the ecal topic
+        def callback_calculated_angle(_topic_name, msg, _time):
+            calculated_angle_queue.put(msg)
+
+        # Initialize ecal
+        ecal_core.initialize(sys.argv, "WebIVI CalculatedAngle")
+
+        # Subscribe to the calculated_angle topic receiving json messages
+        sub = StringSubscriber("calculated_angle")
+
+        # Set the Callback
+        sub.set_callback(callback_calculated_angle)
+
+        while ecal_core.ok() and not stop_server_side_event.is_set():
+            if not calculated_angle_queue.empty():
+                calculated_angle_data = calculated_angle_queue.get()
+                logger.info(calculated_angle_data)
+                calculated_angle_queue.task_done()
+                calculated_angle_queue = Queue()
+                yield f"event: calculated_angle\ndata: {calculated_angle_data}\n\n"
+            await sleep(0.1)
+
+        # Finalize eCAL API
+        ecal_core.finalize()
+    return StreamingResponse(calculated_angle_generator(), media_type="text/event-stream")
+
+@app.get("/version")
+async def version():
+    """
+    Asynchronous function to handle vehicle dynamics data streaming to the client browser.
+
+    This function initializes the eCAL API, subscribes to the "version" topic,
+    and sets a callback to handle incoming messages. It uses an asynchronous generator
+    to yield vehicle dynamics data as server-sent events (SSE).
+
+    Returns:
+        StreamingResponse: A streaming response with vehicle dynamics data in SSE format.
+    """
+    async def version_generator():
+        version_queue = Queue() # Already synchronized queue
+
+        # Define an ecal callback triggered when receiving data through the ecal topic
+        def callback_version(_topic_name, msg, _time):
+            version_queue.put(msg)
+
+        # Initialize ecal
+        ecal_core.initialize(sys.argv, "WebIVI Version")
+
+        # Subscribe to the version topic receiving json messages
+        sub = StringSubscriber("version")
+
+        # Set the Callback
+        sub.set_callback(callback_version)
+
+        while ecal_core.ok() and not stop_server_side_event.is_set():
+            if not version_queue.empty():
+                version_data = version_queue.get()
+                logger.info(version_data)
+                version_queue.task_done()
+                version_queue = Queue()
+                yield f"event: version\ndata: {version_data}\n\n"
+            await sleep(0.1)
+
+        # Finalize eCAL API
+        ecal_core.finalize()
+    return StreamingResponse(version_generator(), media_type="text/event-stream")
+
+@app.post("/yorn")
+async def yorn():
+    global pub
+
+    # Initialize ecal
+    ecal_core.initialize(sys.argv, "WebIVI Version")
+
+    if pub is None:
+        pub = StringPublisher("yorn")
+    pub.send("1")
+
+    # Finalize eCAL API
+    ecal_core.finalize()
 
 @app.post("/execute-shell-script")
 async def execute_shell_script():

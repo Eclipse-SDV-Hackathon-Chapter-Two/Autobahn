@@ -17,6 +17,19 @@ eventSourceHiddenDangerPeople.onopen = function (_event) {
     console.log("Connection to /hidden_danger_people opened");
 }
 
+const eventSourceCalculatedAngle = new EventSource("/calculated_angle");
+
+eventSourceCalculatedAngle.onopen = function (_event) {
+    console.log("Connection to /calculated_angle opened");
+}
+
+const eventSourceVersion = new EventSource("/version");
+
+eventSourceVersion.onopen = function (_event) {
+    console.log("Connection to /version opened");
+}
+
+
 // ---------- add event listener for the event ----------
 let lastEventTime = null; // To store the timestamp of the last event
 let totalDistance = 0;
@@ -69,6 +82,28 @@ eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function 
             isTimer = false;
             console.log("Inactivate Turn Signals after 3 seconds");
         }, 3000);
+    }
+});
+
+eventSourceCalculatedAngle.addEventListener("calculated_angle", function (event) {
+    let raw_data = event.data;
+    console.log(raw_data);
+
+    if (raw_data === "Safe") {
+        wg.inactivateWarningGlowing();
+    } else if (true) {
+        let angle = parseInt(raw_data);
+        wg.activateWarningGlowing(angle);
+    }
+});
+
+eventSourceVersion.addEventListener("version", function (event) {
+    let raw_data = event.data;
+    console.log(raw_data);
+
+    if (raw_data === "-1") {
+        const firmwareUpdate = document.getElementById('firmware-update');
+        firmwareUpdate.classList.toggle('visible');
     }
 });
 
