@@ -44,3 +44,7 @@ export function updateSpeedAndTorque(speed_km_h) {
 
     speedValue.textContent = speed_km_h;
 }
+
+export function isDriving(speed_km_h) {
+    return speed_km_h > 0;
+}
