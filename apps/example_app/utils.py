@@ -25,4 +25,12 @@ def reorganize_yolo_json(json_msg):
     for i, class_id in enumerate(class_ids):
         result_set.append([class_ids[i], confidences[i], xyxy[i]])
     return result_set
+
+def bbox_centerpoint(data):
+    bbox = data
+    x1, y1, x2, y2 = bbox
+    x_mid = (x1 + x2) / 2
+    y_mid = (y1 + y2) / 2
+
+    return x_mid, y_mid
     

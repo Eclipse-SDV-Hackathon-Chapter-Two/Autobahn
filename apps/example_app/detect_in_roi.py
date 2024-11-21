@@ -17,7 +17,7 @@ import sys, time, json, logging
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
 from ecal.core.publisher import StringPublisher
-from decision_functions import HiddenDangerPeople
+from decision_functions import IsPointInROI
 from utils import reorganize_yolo_json, bbox_centerpoint
 
 logger = logging.getLogger("example_app")
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     logger.info("Starting example app...")
 
     # Initialize eCAL
-    ecal_core.initialize(sys.argv, "Example App")
+    ecal_core.initialize(sys.argv, "Is people in roi App")
 
     # Create a subscriber that listens on the "object_detection"
     sub = StringSubscriber("object_detection")
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
 
     # Create a publisher that listens on the "object_detection_class"
-    pub = StringPublisher("hidden_danger_people")
+    pub = StringPublisher("people_in_roi")
 
     # Just don't exit
     try:
@@ -75,14 +75,22 @@ if __name__ == "__main__":
 
             if global_result_set:
                 result_set = global_result_set  # Only publish if we have received class IDs
-                if HiddenDangerPeople(result_set) == "danger":
-                    pub.send("HiddenDangerPeople")
-                    logger.info(f"result_set: {result_set}")
-                    logger.info(f"Published: danger")
+                for entry in result_set:
+                    class_id, confidence, bbox = entry
+                    center_x, center_y =  bbox_centerpoint(bbox)
+                    center_point = (center_x, center_y)
+
+                if IsPointInROI(center_point, roi_points= [(0, 450), (0, 600), (450, 350), (550, 350), (1000, 720)]) is True:
+                    in_roi_msg = "PeopleInROI"
+                    pub.send(in_roi_msg)
+                    logger.info(f"Published: {in_roi_msg}")
                 else:
-                    pass
+                    in_roi_msg = "No"
+                    pub.send(in_roi_msg)
                 
             else:
+                in_roi_msg = "NO_detection"
+                pub.send(in_roi_msg)
                 logger.info("No class IDs to publish yet.")
 
             # Wait before the next loop
