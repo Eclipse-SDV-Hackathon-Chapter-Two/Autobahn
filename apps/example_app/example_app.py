@@ -27,7 +27,7 @@ logger.setLevel(logging.INFO)
 def callback(topic_name, msg, time):
     try:
         json_msg = json.loads(msg)
-        print(f"Received: {msg}")
+        print(f"Received: {json_msg}")
     except json.JSONDecodeError:
         logger.error(f"Error: Could not decode message: '{msg}'")
     except Exception as e:
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     ecal_core.initialize(sys.argv, "Example App")
 
     # Create a subscriber that listens on the "traffic_sign_detection"
-    sub = StringSubscriber("vehicle_dynamics")
+    sub = StringSubscriber("people_in_roi")
 
     # Set the Callback
     sub.set_callback(callback)

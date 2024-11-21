@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from uvicorn import run
 import os
 import sys
@@ -11,6 +12,7 @@ import threading
 import logging
 import signal
 from contextlib import asynccontextmanager
+import subprocess
 
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
@@ -103,6 +105,52 @@ async def vehicle_dynamics():
 
     return StreamingResponse(vehicle_dynamics_generator(), media_type="text/event-stream")
 
+@app.get("/hidden_danger_people")
+async def hidden_danger_people():
+    """
+    Asynchronous function to handle vehicle dynamics data streaming to the client browser.
+
+    This function initializes the eCAL API, subscribes to the "hidden_danger_people" topic,
+    and sets a callback to handle incoming messages. It uses an asynchronous generator
+    to yield vehicle dynamics data as server-sent events (SSE).
+
+    Returns:
+        StreamingResponse: A streaming response with vehicle dynamics data in SSE format.
+    """
+    async def hidden_danger_people_generator():
+        hidden_danger_people_queue = Queue() # Already synchronized queue
+
+        # Define an ecal callback triggered when receiving data through the ecal topic
+        def callback_hidden_danger_people(_topic_name, msg, _time):
+            hidden_danger_people_queue.put(msg)
+
+        # Initialize ecal
+        ecal_core.initialize(sys.argv, "WebIVI HiddenDangerPeople")
+
+        # Subscribe to the hidden_danger_people topic receiving json messages
+        sub = StringSubscriber("hidden_danger_people")
+
+        # Set the Callback
+        sub.set_callback(callback_hidden_danger_people)
+
+        while ecal_core.ok() and not stop_server_side_event.is_set():
+            if not hidden_danger_people_queue.empty():
+                hidden_danger_people_data = hidden_danger_people_queue.get()
+                logger.info(hidden_danger_people_data)
+                hidden_danger_people_queue.task_done()
+                hidden_danger_people_queue = Queue()
+                yield f"event: hidden_danger_people\ndata: {hidden_danger_people_data}\n\n"
+            await sleep(0.1)
+
+        # Finalize eCAL API
+        ecal_core.finalize()
+    return StreamingResponse(hidden_danger_people_generator(), media_type="text/event-stream")
+
+@app.post("/execute-shell-script")
+async def execute_shell_script():
+    result = subprocess.run(["./static/helloworld.sh"], capture_output=True, text=True)
+    logger.info(f"Script output: {result.stdout}")
+    return JSONResponse(content={"message": "Shell script executed successfully", "output": result.stdout})
 
 if __name__ == "__main__":
     run(app, host="0.0.0.0", port=5500)
