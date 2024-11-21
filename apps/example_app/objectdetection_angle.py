@@ -86,16 +86,18 @@ if __name__ == "__main__":
                         angle = calculate_signed_angle(a, b, c)
 
                         pub.send(str(int(angle)))
-                        logger.info(f"Published angle: {angle:.2f}")
+                        # logger.info(f"Published angle: {angle:.2f}")
                         
             else:
-                logger.info("No data to process.")
+                pass
+                # logger.info("No data to process.")
                 
             global_result_set = []
 
             time.sleep(0.1)
     except KeyboardInterrupt:
-        logger.info("Application stopped by user.")
+        pass
+        # logger.info("Application stopped by user.")
 
     # Finalize eCAL
     ecal_core.finalize()

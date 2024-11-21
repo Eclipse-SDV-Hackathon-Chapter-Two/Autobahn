@@ -17,8 +17,9 @@ import sys, time, json, logging
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
 from ecal.core.publisher import StringPublisher
-from decision_functions import IsPointInROI
+from decision_functions import HiddenDangerPeople
 from utils import reorganize_yolo_json, bbox_centerpoint
+
 
 logger = logging.getLogger("example_app")
 stdout = logging.StreamHandler(stream=sys.stdout)
@@ -54,51 +55,46 @@ def object_raw_sub_callback(topic_name, msg, time):
     except Exception as e:
         logger.error(f"Error: {e}")
 
+
 if __name__ == "__main__":
     logger.info("Starting example app...")
 
     # Initialize eCAL
-    ecal_core.initialize(sys.argv, "Is people in roi App")
+    ecal_core.initialize(sys.argv, "hidden_danger_people_arbiter")
 
     # Create a subscriber that listens on the "object_detection"
     sub = StringSubscriber("object_detection")
     # Set the Callback
     sub.set_callback(object_raw_sub_callback)
 
-
+    
     # Create a publisher that listens on the "object_detection_class"
-    pub = StringPublisher("people_in_roi")
+    pub = StringPublisher("hidden_danger_people")
 
     # Just don't exit
     try:
         while ecal_core.ok():
-
             if global_result_set:
                 result_set = global_result_set  # Only publish if we have received class IDs
-                for entry in result_set:
-                    class_id, confidence, bbox = entry
-                    center_x, below_y =  bbox_centerpoint(bbox)
-                    center_below_point = (center_x, below_y)
-
-                    if IsPointInROI(center_below_point, roi_points = [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]) is True:
-                        in_roi_msg = "PeopleInROI"
-                        pub.send(in_roi_msg)
-                        # logger.info(f"Published: {in_roi_msg}")
-                    else:
-                        in_roi_msg = "No"
-                        pub.send(in_roi_msg)
+                if HiddenDangerPeople(result_set) == "danger":
+                    pub.send("HiddenDangerPeople")
+                    
+                    
+                    logger.info(f"result_set: {result_set}")
+                    logger.info(f"Published: danger")
+                else:
+                    pub.send("Safe")
                 
             else:
-                in_roi_msg = "NO_detection"
-                pub.send(in_roi_msg)
-                # logger.info("No class IDs to publish yet.")
+                pub.send("Safe")
+                
+                logger.info("No class IDs to publish yet.")
 
             # Wait before the next loop
             time.sleep(0.1)
 
     except KeyboardInterrupt:
-        pass
-        # logger.info("Application stopped by user.")
+        logger.info("Application stopped by user.")
 
     
     # finalize eCAL API
