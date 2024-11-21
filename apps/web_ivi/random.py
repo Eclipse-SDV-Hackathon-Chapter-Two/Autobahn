@@ -18,15 +18,20 @@ import ecal.core.core as ecal_core
 from ecal.core.publisher import StringPublisher
 from ecal.core.subscriber import StringSubscriber
 
+logger = logging.getLogger("web_ivi")
+stdout = logging.StreamHandler(stream=sys.stdout)
+stdout.setLevel(logging.INFO)
+logger.addHandler(stdout)
+logger.setLevel(logging.INFO)
+
+
+
 def callback(topic_name, msg, time):
     if msg == "-1": # different
         print("Y/N")
-
+        logger.info("Yes&NO")
         # Publish part
-        for i in range(15):
-            pub.send("1")
-            time.sleep(1)
-        
+        pub.send("1")
     else:
         print("Fail")
 
@@ -34,17 +39,20 @@ def callback(topic_name, msg, time):
 
 if __name__ == "__main__":
     # Create a publisher that sends dummy data to the "hello_topic" topic
+    logger.info("Starting randomPY..")
+
     ecal_core.initialize(sys.argv, "Random Control")
 
     sub = StringSubscriber("version")
     pub = StringPublisher("yorn")
 
     # Subscribe part
-    
     sub.set_callback(callback)
 
     
-    
+    while ecal_core.ok():
+        logger.info("waiting")
+        time.sleep(0.5)
 
     
 

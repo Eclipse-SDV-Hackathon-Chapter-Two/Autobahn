@@ -35,7 +35,6 @@ else
   echo "Before Init Version Control python"
   python3 version_control.py
   echo "After Init Version Control python"
-  sudo kill -9 "$PID"
 
 fi
 wait

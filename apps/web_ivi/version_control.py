@@ -18,17 +18,27 @@ import ecal.core.core as ecal_core
 from ecal.core.publisher import StringPublisher
 from ecal.core.subscriber import StringSubscriber
 
+logger = logging.getLogger("web_ivi")
+stdout = logging.StreamHandler(stream=sys.stdout)
+stdout.setLevel(logging.INFO)
+logger.addHandler(stdout)
+logger.setLevel(logging.INFO)
+
+
 def callback(topic_name, msg, time):
     if msg == "1": # yes
+        logger.info("subProcess, means YES!..")
         subprocess.run(["bash", "version_update.sh"])
         print("Update Start ...")
-        
     else:
-        print("Update Pass")
+        print("already Started ...")
+        pass
 
 
 
 if __name__ == "__main__":
+
+    logger.info("Starting version PY..")
 
     # Publish part
     # Initialize eCAL
@@ -43,12 +53,13 @@ if __name__ == "__main__":
 
     for i in range(10):
         pub.send("-1")
+        logger.info("send -1")
         time.sleep(0.1)
-    
 
     
 
-    time.sleep(15) #15s wait
+    while ecal_core.ok():
+        time.sleep(0.5)
 
     # finalize eCAL API
     ecal_core.finalize()
