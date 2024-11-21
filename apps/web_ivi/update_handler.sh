@@ -8,9 +8,6 @@ UPDATE_DIR="updates"
 LOCAL_VERSION_FILE="$UPDATE_DIR/current_version.txt"
 TEMP_FILE="$UPDATE_DIR/update.tar.xz"
 
-python3 random.py
-echo "INIT random python"
-
 exec uvicorn main:app --host 0.0.0.0 --port 5959
 echo "program start"
 
