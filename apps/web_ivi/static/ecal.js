@@ -27,19 +27,25 @@ eventSourceVehicleDynamics.addEventListener("vehicle-dynamics", function (event)
 });
 
 let isTurnOn = false;
+let leftInterval, rightInterval;
+let isTimer = false;
 eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function (event) {
     let raw_data = event.data;
     console.log("Hidden Danger People: ", raw_data);
     if (raw_data === "HiddenDangerPeople" && !isTurnOn) {
-        ts.activateTurnSignal('left');
-        ts.activateTurnSignal('right');
+        leftInterval = ts.activateTurnSignal('left');
+        rightInterval = ts.activateTurnSignal('right');
         isTurnOn = true;
         console.log("Activate Turn Signals");
-    } else if (raw_data === "Safe" && isTurnOn) {
-        ts.inactivateTurnSignal('left');
-        ts.inactivateTurnSignal('right');
-        isTurnOn = false;
-        console.log("Inactivate Turn Signals");
+    } else if (raw_data === "Safe" && isTurnOn && !isTimer) {
+        isTimer = true;
+        setTimeout(() => {
+            ts.inactivateTurnSignal('left', leftInterval);
+            ts.inactivateTurnSignal('right', rightInterval);
+            isTurnOn = false;
+            isTimer = false;
+            console.log("Inactivate Turn Signals after 3 seconds");
+        }, 3000);
     }
 });
 
