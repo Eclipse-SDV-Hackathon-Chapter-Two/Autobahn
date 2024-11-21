@@ -10,6 +10,12 @@ eventSourceVehicleDynamics.onopen = function (_event) {
     console.log("Connection to /vehicle-dynamics opened");
 }
 
+const eventSourceHiddenDangerPeople = new EventSource("/hidden_danger_people");
+
+eventSourceHiddenDangerPeople.onopen = function (_event) {
+    console.log("Connection to /hidden_danger_people opened");
+}
+
 // ---------- add event listener for the event ----------
 eventSourceVehicleDynamics.addEventListener("vehicle-dynamics", function (event) {
     let raw_data = event.data;
@@ -20,8 +26,30 @@ eventSourceVehicleDynamics.addEventListener("vehicle-dynamics", function (event)
     vd.updateSpeedAndTorque(speed_km_h);
 });
 
+let isTurnOn = false;
+eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function (event) {
+    let raw_data = event.data;
+    console.log("Hidden Danger People: ", raw_data);
+    if (raw_data === "HiddenDangerPeople" && !isTurnOn) {
+        ts.activateTurnSignal('left');
+        ts.activateTurnSignal('right');
+        isTurnOn = true;
+        console.log("Activate Turn Signals");
+    } else if (raw_data === "Safe" && isTurnOn) {
+        ts.inactivateTurnSignal('left');
+        ts.inactivateTurnSignal('right');
+        isTurnOn = false;
+        console.log("Inactivate Turn Signals");
+    }
+});
+
 // ---------- close the connection on error ----------
 eventSourceVehicleDynamics.onerror = function (event) {
     console.log("Error: " + event);
     eventSourceVehicleDynamics.close();
+}
+
+eventSourceHiddenDangerPeople.onerror = function (event) {
+    console.log("Error: " + event);
+    eventSourceHiddenDangerPeople.close();
 }
