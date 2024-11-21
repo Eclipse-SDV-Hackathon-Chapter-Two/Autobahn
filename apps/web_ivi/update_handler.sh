@@ -8,6 +8,13 @@ UPDATE_DIR="updates"
 LOCAL_VERSION_FILE="$UPDATE_DIR/current_version.txt"
 TEMP_FILE="$UPDATE_DIR/update.tar.xz"
 
+python3 random.py
+echo "INIT random python"
+
+exec uvicorn main:app --host 0.0.0.0 --port 5959
+echo "program start"
+
+
 # 최신 버전 가져오기
 LATEST_VERSION=$(curl -s "$LATEST_VERSION_URL")
 
@@ -25,20 +32,11 @@ fi
 
 if [ "$LATEST_VERSION" == "$LOCAL_VERSION" ]; then
   echo "Already up-to-date. Starting server..."
-  exec uvicorn main:app --host 0.0.0.0 --port 5959
+else
+  echo "Before Init Version Control python"
+  python3 version_control.py
+  echo "After Init Version Control python"
 fi
 
-# 업데이트 파일 다운로드
-curl -s -o "$TEMP_FILE" "$UPDATE_URL_BASE/$LATEST_VERSION/static.tar.xz"
 
-if [ $? -ne 0 ]; then
-  echo "Failed to download update from S3"
-  exit 1
-fi
 
-# 업데이트 적용
-tar -xJf "$TEMP_FILE" -C .  
-echo "$LATEST_VERSION" > "$LOCAL_VERSION_FILE"
-
-echo "Update applied successfully. Starting server..."
-exec uvicorn main:app --host 0.0.0.0 --port 5959

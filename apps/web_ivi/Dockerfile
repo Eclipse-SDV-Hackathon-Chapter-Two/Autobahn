@@ -30,8 +30,13 @@ COPY static /web_ivi/static
 
 # 6. 업데이트 스크립트 복사
 COPY update_handler.sh /update_handler.sh
+COPY version_update.sh /version_update.sh
 COPY updates /web_ivi/updates
+COPY version_control.py /web_ivi/version_control.py
+COPY random.py /web_ivi/random.py
+
 RUN chmod +x /update_handler.sh
+RUN chmod +x /version_update.sh
 
 # 7. 작업 디렉토리 설정
 WORKDIR /web_ivi
