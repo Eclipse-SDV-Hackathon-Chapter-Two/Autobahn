@@ -1,8 +1,10 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from uvicorn import run
+import os
+import requests
 import sys
 from asyncio import sleep
 from queue import Queue
@@ -13,6 +15,13 @@ from contextlib import asynccontextmanager
 
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
+
+# OTA 관련 변수
+LATEST_VERSION_URL = "http://example.com/updates/latest_version.txt"
+BASE_UPDATE_URL = "http://example.com/updates"
+LOCAL_VERSION_FILE = "updates/current_version.txt"
+UPDATE_DIR = "updates"
+DOWNLOAD_FILE = "/tmp/update.tar.gz"
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -108,6 +117,59 @@ async def vehicle_dynamics():
         # Finalize eCAL API
         ecal_core.finalize()
     return StreamingResponse(vehicle_dynamics_generator(), media_type="text/event-stream")
+
+@app.post("/update/")
+def update():
+    """
+    Checks for the latest version and applies updates if necessary.
+    """
+    try:
+        # Step 1: Fetch current version
+        if os.path.exists(LOCAL_VERSION_FILE):
+            with open(LOCAL_VERSION_FILE, "r") as f:
+                local_version = f.read().strip()
+        else:
+            local_version = "0.0.0"
+        logger.info(f"Current version: {local_version}")
+
+        # Step 2: Fetch latest version
+        response = requests.get(LATEST_VERSION_URL)
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail="Failed to fetch the latest version information")
+        latest_version = response.text.strip()
+        logger.info(f"Latest version: {latest_version}")
+
+        # Step 3: Check if an update is needed
+        if local_version == latest_version:
+            return JSONResponse(content={"status": "no_update", "message": "Already up-to-date"})
+
+        # Step 4: Download the latest update
+        update_url = f"{BASE_UPDATE_URL}/{latest_version}/update.tar.gz"
+        logger.info(f"Downloading update from {update_url}")
+        response = requests.get(update_url, stream=True)
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail="Failed to download the update file")
+        os.makedirs(os.path.dirname(DOWNLOAD_FILE), exist_ok=True)
+        with open(DOWNLOAD_FILE, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+        # Step 5: Apply the update
+        logger.info("Applying update...")
+        os.makedirs(UPDATE_DIR, exist_ok=True)
+        os.system(f"tar -xzf {DOWNLOAD_FILE} -C {UPDATE_DIR}")
+
+        # Step 6: Update the current version file
+        with open(LOCAL_VERSION_FILE, "w") as f:
+            f.write(latest_version)
+
+        logger.info("Update applied successfully")
+        return JSONResponse(content={"status": "success", "message": f"Updated to version {latest_version}"})
+
+    except Exception as e:
+        logger.error(f"Update failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     run(app, host="0.0.0.0", port=5500)

@@ -49,5 +49,6 @@ if __name__ == "__main__":
     while ecal_core.ok():
         time.sleep(0.5)
     
+    
     # finalize eCAL API
     ecal_core.finalize()
