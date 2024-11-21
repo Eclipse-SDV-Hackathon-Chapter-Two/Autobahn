@@ -50,10 +50,11 @@ def object_raw_sub_callback(topic_name, msg, time):
         confidences = json_msg.get("confidences", [])
         xyxy = json_msg.get("xyxy", [])
 
-        global_result_set = [] ######초기화 타이밍 문제
+         ######초기화 타이밍 문제
+        global_result_set = []
 
         for i, class_id in enumerate(class_ids):
-            global_result_set.append([class_ids, confidences[i], xyxy[i]])
+            global_result_set.append([class_ids[i], confidences[i], xyxy[i]])
         
     except json.JSONDecodeError:
         logger.error(f"Error: Could not decode message: '{msg}'")
@@ -68,28 +69,26 @@ if __name__ == "__main__":
 
     # Create a subscriber that listens on the "object_detection"
     sub = StringSubscriber("object_detection")
-
     # Set the Callback
     sub.set_callback(object_raw_sub_callback)
+
 
     # Create a publisher that listens on the "object_detection_class"
     pub = StringPublisher("hidden_danger_people")
 
-    
-    result_set = global_result_set
-
-    
     # Just don't exit
     try:
         while ecal_core.ok():
-            print("rerere", global_result_set)
 
-            if result_set:  # Only publish if we have received class IDs
+            if global_result_set:
+                result_set = global_result_set  # Only publish if we have received class IDs
                 if HiddenDangerPeople(result_set) == "danger":
                     pub.send("HiddenDangerPeople")
+                    logger.info(f"result_set: {result_set}")
+                    logger.info(f"Published: danger")
                 else:
                     pass
-                logger.info(f"Published: {result_set}")
+                
             else:
                 logger.info("No class IDs to publish yet.")
 
