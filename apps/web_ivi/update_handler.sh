@@ -8,7 +8,7 @@ UPDATE_DIR="updates"
 LOCAL_VERSION_FILE="$UPDATE_DIR/current_version.txt"
 TEMP_FILE="$UPDATE_DIR/update.zip"
 
-python3 random.py &
+python3 ran_dom.py &
 echo "INIT random python"
 
 uvicorn main:app --host 0.0.0.0 --port 5960 &

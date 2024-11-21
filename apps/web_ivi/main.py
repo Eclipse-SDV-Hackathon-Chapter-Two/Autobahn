@@ -54,7 +54,12 @@ async def lifespan(_app: FastAPI):
 
 # create a route that delivers the static/index.html file
 app = FastAPI(lifespan=lifespan)
+static_files_with_headers = StaticFiles(directory="static")
+static_files_with_headers.headers = {"Cache-Control": "no-store"}
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+assets_with_headers = StaticFiles(directory="static/assets")
+assets_with_headers.headers = {"Cache-Control": "no-store"}
 app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
 
 app.add_middleware(
