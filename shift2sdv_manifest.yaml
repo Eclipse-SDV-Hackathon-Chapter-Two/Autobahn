@@ -47,3 +47,10 @@ workloads:
     runtimeConfig: |
       image: ghcr.io/eclipse-sdv-hackathon-chapter-two/shift2sdv/web_ivi:latest
       commandOptions: [ "--net=host", "--ipc=host"]
+  helloworld_app:
+    runtime: podman
+    agent: hpc1
+    restartPolicy: NEVER
+    runtimeConfig: |
+      image: ghcr.io/eclipse-sdv-hackathon-chapter-two/shift2sdv/helloworld:latest
+      commandOptions: []
