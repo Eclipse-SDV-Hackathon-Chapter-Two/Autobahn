@@ -172,6 +172,59 @@ body {
     }
 }
 
+#firmware-update {
+    margin-top: 20px;
+    text-align: center;
+    background-color: rgba(32, 35, 38, 0.8);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 300px;
+    display: none; /* Hide by default */
+    opacity: 0; /* Start with 0 opacity for fade-in effect */
+    transition: opacity 0.3s ease; /* Smooth transition for fade effect */
+}
+
+#firmware-update.visible {
+    display: block;
+    opacity: 1;
+}
+
+#firmware-update p {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.update-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-button.yes {
+    background-color: #59F2BF;
+    color: #202326;
+}
+
+.update-button.no {
+    background-color: #FF6B6B;
+    color: #202326;
+}
+
+.update-button:hover {
+    opacity: 0.8;
+}
+
 /* Ensure other elements remain visible */
 .row-main {
     position: relative;
@@ -217,6 +270,9 @@ body {
         flex: 1;
     }
     #turn-signals {
+        margin: 20px auto;
+    }
+    #firmware-update {
         margin: 20px auto;
     }
 }
