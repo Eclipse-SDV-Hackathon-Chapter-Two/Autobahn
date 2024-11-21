@@ -72,7 +72,6 @@ if __name__ == "__main__":
     # Just don't exit
     try:
         while ecal_core.ok():
-
             if global_result_set:
                 result_set = global_result_set  # Only publish if we have received class IDs
                 for entry in result_set:
@@ -80,24 +79,26 @@ if __name__ == "__main__":
                     center_x, below_y =  bbox_centerpoint(bbox)
                     center_below_point = (center_x, below_y)
 
-                    if IsPointInROI(center_below_point, roi_points = [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]) is True:
-                        in_roi_msg = "PeopleInROI"
+                    if IsPointInROI(center_below_point, roi_points = [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]) is True \
+                        and confidence > 0.1:
+                        in_roi_msg = 1
                         pub.send(in_roi_msg)
-                        logger.info(f"Published: {in_roi_msg}")
+                        # logger.info(f"Published: {in_roi_msg}")
                     else:
-                        in_roi_msg = "No"
+                        in_roi_msg = 0
                         pub.send(in_roi_msg)
                 
             else:
-                in_roi_msg = "NO_detection"
+                in_roi_msg = 0
                 pub.send(in_roi_msg)
-                logger.info("No class IDs to publish yet.")
+                # logger.info("No class IDs to publish yet.")
 
             # Wait before the next loop
             time.sleep(0.1)
 
     except KeyboardInterrupt:
-        logger.info("Application stopped by user.")
+        pass
+        # logger.info("Application stopped by user.")
 
     
     # finalize eCAL API
