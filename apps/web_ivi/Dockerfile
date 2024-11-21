@@ -33,7 +33,6 @@ COPY update_handler.sh /web_ivi/update_handler.sh
 COPY version_update.sh /web_ivi/version_update.sh
 COPY updates /web_ivi/updates
 COPY version_control.py /web_ivi/version_control.py
-COPY ran_dom.py /web_ivi/ran_dom.py
 
 RUN chmod +x /web_ivi/update_handler.sh
 RUN chmod +x /web_ivi/version_update.sh
