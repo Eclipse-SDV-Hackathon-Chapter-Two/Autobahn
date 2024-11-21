@@ -55,6 +55,18 @@ def object_raw_sub_callback(topic_name, msg, time):
     except Exception as e:
         logger.error(f"Error: {e}")
 
+people_roi_topic = 0
+
+def people_in_roi_callback(topic_name, msg, time):
+    global people_roi_topic
+    try:
+        people_roi_topic = msg
+
+    except json.JSONDecodeError:
+        logger.error(f"Error: Could not decode message: '{msg}'")
+    except Exception as e:
+        logger.error(f"Error: {e}")
+
 if __name__ == "__main__":
     logger.info("Starting example app...")
 
@@ -64,6 +76,9 @@ if __name__ == "__main__":
     # Create a subscriber for "object_detection"
     sub = StringSubscriber("object_detection")
     sub.set_callback(object_raw_sub_callback)
+    
+    sub_roi = StringSubscriber("people_in_roi")
+    sub_roi.set_callback(object_raw_sub_callback)
 
     # Create a publisher for "calculated_angle"
     pub = StringPublisher("calculated_angle")
@@ -77,7 +92,7 @@ if __name__ == "__main__":
 
                 for entry in result_set:
                     class_id, confidence, bbox = entry
-                    if class_id == 0.0:
+                    if class_id == 0.0: #and people_roi_topic == 1:
                         x1, y1, x2, y2 = bbox
                         x_mid = (x1 + x2) / 2
                         y_mid = (y1 + y2) / 2
@@ -92,6 +107,7 @@ if __name__ == "__main__":
                         pub.send("Safe")
                         
             else:
+                # pub.send("Safe")
                 logger.info("No data to process.")
                 pub.send("Safe")
                 
@@ -99,7 +115,8 @@ if __name__ == "__main__":
 
             time.sleep(0.1)
     except KeyboardInterrupt:
-        logger.info("Application stopped by user.")
+        pass
+        # logger.info("Application stopped by user.")
 
     # Finalize eCAL
     ecal_core.finalize()

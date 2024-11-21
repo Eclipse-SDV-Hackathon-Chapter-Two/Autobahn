@@ -260,10 +260,4 @@ body {
     #speedometer, #torque, #info-screen {
         flex: 1;
     }
-    #turn-signals {
-        margin: 20px auto;
-    }
-    #firmware-update {
-        margin: 20px auto;
-    }
 }
