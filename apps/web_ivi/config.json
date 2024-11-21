@@ -1,5 +1,5 @@
 {
-    "mqtt_broker": "test.mosquitto.org",
-    "mqtt_port": 1883,
-    "update_url": "http://example.com/updates/latest.tar.gz"
+    "aws_bucket_name": "sdvhackathon-autobahn-simpleota",
+    "aws_region": "us-east-1",
+    "latest_version_key": "latest_version.txt"
   }
