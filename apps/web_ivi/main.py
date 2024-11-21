@@ -146,6 +146,47 @@ async def hidden_danger_people():
         ecal_core.finalize()
     return StreamingResponse(hidden_danger_people_generator(), media_type="text/event-stream")
 
+@app.get("/calculated_angle")
+async def calculated_angle():
+    """
+    Asynchronous function to handle vehicle dynamics data streaming to the client browser.
+
+    This function initializes the eCAL API, subscribes to the "calculated_angle" topic,
+    and sets a callback to handle incoming messages. It uses an asynchronous generator
+    to yield vehicle dynamics data as server-sent events (SSE).
+
+    Returns:
+        StreamingResponse: A streaming response with vehicle dynamics data in SSE format.
+    """
+    async def calculated_angle_generator():
+        calculated_angle_queue = Queue() # Already synchronized queue
+
+        # Define an ecal callback triggered when receiving data through the ecal topic
+        def callback_calculated_angle(_topic_name, msg, _time):
+            calculated_angle_queue.put(msg)
+
+        # Initialize ecal
+        ecal_core.initialize(sys.argv, "WebIVI CalculatedAngle")
+
+        # Subscribe to the calculated_angle topic receiving json messages
+        sub = StringSubscriber("calculated_angle")
+
+        # Set the Callback
+        sub.set_callback(callback_calculated_angle)
+
+        while ecal_core.ok() and not stop_server_side_event.is_set():
+            if not calculated_angle_queue.empty():
+                calculated_angle_data = calculated_angle_queue.get()
+                logger.info(calculated_angle_data)
+                calculated_angle_queue.task_done()
+                calculated_angle_queue = Queue()
+                yield f"event: calculated_angle\ndata: {calculated_angle_data}\n\n"
+            await sleep(0.1)
+
+        # Finalize eCAL API
+        ecal_core.finalize()
+    return StreamingResponse(calculated_angle_generator(), media_type="text/event-stream")
+
 @app.post("/execute-shell-script")
 async def execute_shell_script():
     result = subprocess.run(["./static/helloworld.sh"], capture_output=True, text=True)
