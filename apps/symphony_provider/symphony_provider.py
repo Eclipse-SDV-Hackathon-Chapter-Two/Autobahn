@@ -25,9 +25,13 @@ stdout.setLevel(logging.INFO)
 logger.addHandler(stdout)
 logger.setLevel(logging.INFO)
 
+logger2 = logging.getLogger("helloworld")
+logger2.addHandler(stdout)
+logger2.setLevel(logging.INFO)
+
 # Get config over environment variables
 VEHICLE_ID = os.environ.get('VIN')
-
+HI_ID = os.environ.get('HELLO')
 # Create a new Ankaios object.
 # The connection to the control interface is automatically done at this step.
 with Ankaios() as ankaios:
@@ -38,5 +42,9 @@ with Ankaios() as ankaios:
         # https://eclipse-ankaios.github.io/ankaios/latest/usage/tutorial-fleet-management/
         state = ankaios.get_state(field_masks=["workloadStates"])
         logger.info(f"Hello from vehicle {VEHICLE_ID}")
+        logger2.info(f"Hello from Hello {HI_ID}")
         logger.info(f"Got the following workload execution states from Ankaios: {state.to_dict()["workload_states"]}")
         time.sleep(3.14)
+        
+
+

@@ -1,9 +1,10 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from uvicorn import run
+import os
 import sys
 from asyncio import sleep
 from queue import Queue
@@ -42,12 +43,12 @@ async def lifespan(_app: FastAPI):
     signal.signal(signal.SIGINT, lambda: stop_server_side_event.set())
 
     yield
+
     # Run on shutdown
-    # Finalize eCAL API
     ecal_core.finalize()
     logger.info('Shutting down...')
 
-# create a route that delivers the statc/index.html file
+# create a route that delivers the static/index.html file
 app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
@@ -63,7 +64,7 @@ app.add_middleware(
 @app.get("/", response_class=HTMLResponse)
 def home():
     """
-    Serves the web ivi page by returning a FileResponse object pointing to "static/index.html".
+    Serves the web IVI page by returning a FileResponse object pointing to "static/index.html".
 
     Returns:
         FileResponse: A response object that serves the "static/index.html" file.
@@ -74,16 +75,9 @@ def home():
 async def vehicle_dynamics():
     """
     Asynchronous function to handle vehicle dynamics data streaming to the client browser.
-
-    This function initializes the eCAL API, subscribes to the "vehicle_dynamics" topic,
-    and sets a callback to handle incoming messages. It uses an asynchronous generator
-    to yield vehicle dynamics data as server-sent events (SSE).
-
-    Returns:
-        StreamingResponse: A streaming response with vehicle dynamics data in SSE format.
     """
     async def vehicle_dynamics_generator():
-        vehicle_dynamics_queue = Queue() # Already synchronized queue
+        vehicle_dynamics_queue = Queue()
 
         # Define an ecal callback triggered when receiving data through the ecal topic
         def callback_vehicle_dynamics(_topic_name, msg, _time):
@@ -107,8 +101,8 @@ async def vehicle_dynamics():
                 yield f"event: vehicle-dynamics\ndata: {vehicle_dynamics_data}\n\n"
             await sleep(0.1)
 
-        # Finalize eCAL API
         ecal_core.finalize()
+
     return StreamingResponse(vehicle_dynamics_generator(), media_type="text/event-stream")
 
 @app.get("/hidden_danger_people")
@@ -160,4 +154,3 @@ async def execute_shell_script():
 
 if __name__ == "__main__":
     run(app, host="0.0.0.0", port=5500)
-

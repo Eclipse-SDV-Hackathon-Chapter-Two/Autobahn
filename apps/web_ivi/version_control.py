@@ -12,43 +12,43 @@
 
 # SPDX-License-Identifier: Apache-2.0
 
-import sys, time, json, logging
+import sys, time, logging, subprocess
 
 import ecal.core.core as ecal_core
+from ecal.core.publisher import StringPublisher
 from ecal.core.subscriber import StringSubscriber
 
-logger = logging.getLogger("example_app")
-stdout = logging.StreamHandler(stream=sys.stdout)
-stdout.setLevel(logging.INFO)
-logger.addHandler(stdout)
-logger.setLevel(logging.INFO)
-
-# Callback for receiving messages
 def callback(topic_name, msg, time):
-    try:
-        json_msg = json.loads(msg)
-        print(f"Received: {json_msg}")
-    except json.JSONDecodeError:
-        logger.error(f"Error: Could not decode message: '{msg}'")
-    except Exception as e:
-        logger.error(f"Error: {e}")
+    if msg == "1": # yes
+        subprocess.run(["bash", "version_update.sh"])
+        print("Update Start ...")
+        
+    else:
+        print("Update Pass")
+
+
 
 if __name__ == "__main__":
-    logger.info("Starting example app...")
 
+    # Publish part
     # Initialize eCAL
-    ecal_core.initialize(sys.argv, "Example App")
+    ecal_core.initialize(sys.argv, "Version Control")
 
-    # Create a subscriber that listens on the "traffic_sign_detection"
-    sub = StringSubscriber("people_in_roi")
+    # Create a publisher that sends dummy data to the "hello_topic" topic
+    pub = StringPublisher("version")
+    yorn_sub = StringSubscriber("yorn")
+    
+    # Subscribe part
+    yorn_sub.set_callback(callback)
 
-    # Set the Callback
-    sub.set_callback(callback)
+    for i in range(10):
+        pub.send("-1")
+        time.sleep(0.1)
     
-    # Just don't exit
-    while ecal_core.ok():
-        time.sleep(0.5)
+
     
-    
+
+    time.sleep(15) #15s wait
+
     # finalize eCAL API
     ecal_core.finalize()
