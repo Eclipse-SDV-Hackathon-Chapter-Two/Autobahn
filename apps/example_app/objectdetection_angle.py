@@ -101,14 +101,15 @@ if __name__ == "__main__":
                         angle = calculate_signed_angle(a, b, c)
 
                         pub.send(str(int(angle)))
-                        logger.info(f"Published angle: {angle:.2f} ,, {people_roi_topic}")
+                        logger.info(f"Published angle: {angle:.2f}")
+
                     else:
-                        # pub.send("Safe")
-                        logger.info("yes data and no need to angle.")
+                        pub.send("Safe")
                         
             else:
                 # pub.send("Safe")
                 logger.info("No data to process.")
+                pub.send("Safe")
                 
             global_result_set = []
 
