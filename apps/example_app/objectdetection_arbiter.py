@@ -17,8 +17,8 @@ import sys, time, json, logging
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
 from ecal.core.publisher import StringPublisher
-from decision_functions import HiddenDangerPeople
-from utils import reorganize_yolo_json, bbox_centerpoint
+from decision_functions import HiddenDangerPeople, IsPointInROI
+from utils import reorganize_yolo_json, bbox_centerpoint, calculate_signed_angle
 import paho.mqtt.client as mqtt
 
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     logger.info("Starting example app...")
 
     # Initialize eCAL
-    ecal_core.initialize(sys.argv, "hidden_danger_people_arbiter")
+    ecal_core.initialize(sys.argv, "Object_Detection_arbiter")
 
     # Create a subscriber that listens on the "object_detection"
     sub = StringSubscriber("object_detection")
@@ -88,25 +88,25 @@ if __name__ == "__main__":
 
     
     # Create a publisher that listens on the "object_detection_class"
-    pub = StringPublisher("hidden_danger_people")
+    pub_hidden_danger_people = StringPublisher("hidden_danger_people")
+    # pub_calculated_angle = StringPublisher("calculated_angle")
+    # pub_people_in_roi = StringPublisher("people_in_roi")
 
     # Just don't exit
     try:
         while ecal_core.ok():
             if global_result_set:
                 result_set = global_result_set  # Only publish if we have received class IDs
-                if HiddenDangerPeople(result_set) == "danger":
-                    pub.send("HiddenDangerPeople")
-                    publish_message()
+
+                if HiddenDangerPeople(result_set) == "danger": # and speed == 0
                     
-                    
-                    # logger.info(f"result_set: {result_set}")
-                    # logger.info(f"Published: danger")
+                    pub_hidden_danger_people.send("HiddenDangerPeople")
+                    # publish_message()
                 else:
-                    pub.send("Safe")
+                    pub_hidden_danger_people.send("Safe")
                 
             else:
-                pub.send("Safe")
+                pub_hidden_danger_people.send("Safe")
                 
                 # logger.info("No class IDs to publish yet.")
 

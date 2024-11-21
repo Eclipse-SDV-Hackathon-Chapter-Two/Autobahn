@@ -9,11 +9,8 @@ RUN pip install --break-system-packages --no-cache-dir -r requirements.txt
 COPY detect_in_roi.py ./
 COPY objectdetection_angle.py ./
 COPY objectdetection_arbiter.py ./
-COPY angle_calculate.py ./
 COPY decision_functions.py ./
 COPY utils.py ./
-COPY test.py ./
-
 
 # 진입 스크립트 추가 및 실행 권한 부여
 COPY entrypoint.sh /usr/src/app/
