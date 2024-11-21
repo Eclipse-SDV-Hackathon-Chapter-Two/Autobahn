@@ -18,20 +18,23 @@ import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
 from ecal.core.publisher import StringPublisher
 
-def HiddenDangerPeople(data):
-    """
-    Process the filtered result and check conditions:
-    - The first value in the list must be 0.0
-    - The second value (confidence) must be >= 0.75
-    - The midpoint of the x-coordinates (x1 + x2)/2 must be > 360
+recent_x_mid = []
 
-    If all conditions are met, return "WARNING". Otherwise, return "SAFE".
-    """
+def HiddenDangerPeople(data):
+    global recent_x_mid
+
     for entry in data:
         class_id, confidence, bbox = entry
-        if class_id == 0.0 and confidence >= 0.75:
+        if class_id == 0.0 and confidence >= 0.5:
             x1, y1, x2, y2 = bbox
             x_mid = (x1 + x2) / 2
-            if x_mid <= 640:
-                return "danger"
+
+            if 0 <= x_mid <= 640:
+                recent_x_mid.append(x_mid)
+                if len(recent_x_mid) > 3:
+                    recent_x_mid.pop(0)
+
+                if len(recent_x_mid) == 3 and \
+                   recent_x_mid[0] > recent_x_mid[1] > recent_x_mid[2]:
+                    return "danger"
     return "safe"
