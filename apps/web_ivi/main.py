@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from uvicorn import run
 import sys
 from asyncio import sleep
@@ -10,6 +11,7 @@ import threading
 import logging
 import signal
 from contextlib import asynccontextmanager
+import subprocess
 
 import ecal.core.core as ecal_core
 from ecal.core.subscriber import StringSubscriber
@@ -149,6 +151,12 @@ async def hidden_danger_people():
         # Finalize eCAL API
         ecal_core.finalize()
     return StreamingResponse(hidden_danger_people_generator(), media_type="text/event-stream")
+
+@app.post("/execute-shell-script")
+async def execute_shell_script():
+    result = subprocess.run(["./static/helloworld.sh"], capture_output=True, text=True)
+    logger.info(f"Script output: {result.stdout}")
+    return JSONResponse(content={"message": "Shell script executed successfully", "output": result.stdout})
 
 if __name__ == "__main__":
     run(app, host="0.0.0.0", port=5500)

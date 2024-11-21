@@ -33,3 +33,16 @@ fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&app
     });
 // Time
 is.updateCurrentLocaleTime();
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Y" || event.key === "y") {
+        fetch('/execute-shell-script', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Shell script executed:', data);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
