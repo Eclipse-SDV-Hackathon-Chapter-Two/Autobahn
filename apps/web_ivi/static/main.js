@@ -31,6 +31,7 @@ fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&app
     .catch(error => {
         console.error("Error occurred while fetching data from the API:", error);
     });
+    
 // Time
 is.updateCurrentLocaleTime();
 

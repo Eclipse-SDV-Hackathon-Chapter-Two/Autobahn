@@ -108,7 +108,7 @@ async def vehicle_dynamics():
         while ecal_core.ok() and not stop_server_side_event.is_set():
             if not vehicle_dynamics_queue.empty():
                 vehicle_dynamics_data = vehicle_dynamics_queue.get()
-                logger.info(vehicle_dynamics_data)
+                # logger.info(vehicle_dynamics_data)
                 vehicle_dynamics_queue.task_done()
                 vehicle_dynamics_queue = Queue()
                 yield f"event: vehicle-dynamics\ndata: {vehicle_dynamics_data}\n\n"
@@ -149,7 +149,7 @@ async def hidden_danger_people():
         while ecal_core.ok() and not stop_server_side_event.is_set():
             if not hidden_danger_people_queue.empty():
                 hidden_danger_people_data = hidden_danger_people_queue.get()
-                logger.info(hidden_danger_people_data)
+                # logger.info(hidden_danger_people_data)
                 hidden_danger_people_queue.task_done()
                 hidden_danger_people_queue = Queue()
                 yield f"event: hidden_danger_people\ndata: {hidden_danger_people_data}\n\n"
@@ -190,7 +190,7 @@ async def calculated_angle():
         while ecal_core.ok() and not stop_server_side_event.is_set():
             if not calculated_angle_queue.empty():
                 calculated_angle_data = calculated_angle_queue.get()
-                logger.info(calculated_angle_data)
+                # logger.info(calculated_angle_data)
                 calculated_angle_queue.task_done()
                 calculated_angle_queue = Queue()
                 yield f"event: calculated_angle\ndata: {calculated_angle_data}\n\n"
@@ -257,7 +257,7 @@ async def yorn():
 
 @app.post("/execute-shell-script")
 async def execute_shell_script():
-    result = subprocess.run(["./static/helloworld.sh"], capture_output=True, text=True)
+    result = subprocess.run(["./version_update.sh"], capture_output=True, text=True)
     logger.info(f"Script output: {result.stdout}")
     return JSONResponse(content={"message": "Shell script executed successfully", "output": result.stdout})
 
