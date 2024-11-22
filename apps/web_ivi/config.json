@@ -1,0 +1,5 @@
+{
+    "aws_bucket_name": "sdvhackathon-autobahn-simpleota",
+    "aws_region": "us-east-1",
+    "latest_version_key": "latest_version.txt"
+  }
