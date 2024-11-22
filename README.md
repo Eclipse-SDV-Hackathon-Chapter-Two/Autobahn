@@ -345,14 +345,17 @@ Using our angle calculation algorithm, the object's direction is computed and se
   <img src="https://github.com/user-attachments/assets/cf6a7dfb-8557-488b-b5e4-45986418b0e0" alt="pedestrian" width="550"/>
 </div>
 
+video data
+
 <div align="center">
   <img src="https://github.com/user-attachments/assets/fc74eb59-ff97-442b-a2a2-67e086db110f" alt="redalert" width="550"/>
 </div>
+when person detected
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/63bc5179-9094-4e27-8397-9e2503c353a3" alt="indicator" width="550"/>
 </div>
-
+Hidden dange people detected
 
 
 
