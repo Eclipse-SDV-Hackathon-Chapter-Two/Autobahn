@@ -95,8 +95,12 @@ Our solution is divided into **Feature Parts** and **Connectivity Parts**, empha
   - Upon approval from the owner, the system performs the upgrade seamlessly, ensuring the latest features are applied.
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/d98f79ff-5309-44a4-a203-26752f9d0f89" alt="OTA" width="500"/>
+  <img src="https://github.com/user-attachments/assets/d98f79ff-5309-44a4-a203-26752f9d0f89" alt="OTA-AI" width="500"/>
 </div>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/0efd8f92-9c2a-4917-93e2-b6471d8d5727" alt="OTA" width="500"/>
+</div>
+<div align="center"> OTA Architecture
 
 
 ---
@@ -345,19 +349,22 @@ Using our angle calculation algorithm, the object's direction is computed and se
   <img src="https://github.com/user-attachments/assets/cf6a7dfb-8557-488b-b5e4-45986418b0e0" alt="pedestrian" width="550"/>
 </div>
 
-video data
+<div align="center">video data
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/fc74eb59-ff97-442b-a2a2-67e086db110f" alt="redalert" width="550"/>
 </div>
-when person detected
+<div align="center">when person detected
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/63bc5179-9094-4e27-8397-9e2503c353a3" alt="indicator" width="550"/>
 </div>
-Hidden dange people detected
+<div align="center">Hidden dange people detected
 
-
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/123080a8-6e7c-4001-87a0-426b62edcc5a" alt="warning_sign" width="550"/>
+</div>
+<div align="center">When received warning sign
 
 
 # <div align="center">Developers</div>
