@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Add functionality to the Yes and No buttons
+    const firmwareUpdate = document.getElementById('firmware-update');
     const yesButton = document.querySelector('.update-button.yes');
     const noButton = document.querySelector('.update-button.no');
 

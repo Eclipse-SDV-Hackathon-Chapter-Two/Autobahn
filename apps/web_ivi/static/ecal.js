@@ -37,10 +37,10 @@ let isSafe = true;
 eventSourceVehicleDynamics.addEventListener("vehicle-dynamics", function (event) {
     let raw_data = event.data;
     let vehicle_dynamics = JSON.parse(raw_data);
-    console.log(vehicle_dynamics);
+    // console.log(vehicle_dynamics);
 
     let speed_km_h = parseInt(parseFloat(vehicle_dynamics.signals.speedDisplayed) * 3.6)
-    console.log("Received speed_km_h: ", speed_km_h);
+    // console.log("Received speed_km_h: ", speed_km_h);
 
     const currentEventTime = Date.now(); // Current timestamp in milliseconds
     if (lastEventTime !== null) {
@@ -49,9 +49,9 @@ eventSourceVehicleDynamics.addEventListener("vehicle-dynamics", function (event)
         const distanceTraveled = speed_km_h * timeDifferenceHours;
         totalDistance += distanceTraveled;
 
-        console.log(`Time difference: ${timeDifferenceHours.toFixed(6)} hours`);
-        console.log(`Distance traveled in this interval: ${distanceTraveled.toFixed(2)} km`);
-        console.log(`Total distance traveled: ${totalDistance.toFixed(2)} km`);
+        // console.log(`Time difference: ${timeDifferenceHours.toFixed(6)} hours`);
+        // console.log(`Distance traveled in this interval: ${distanceTraveled.toFixed(2)} km`);
+        // console.log(`Total distance traveled: ${totalDistance.toFixed(2)} km`);
     }
 
     lastEventTime = currentEventTime;
@@ -66,13 +66,13 @@ let leftInterval, rightInterval;
 let isTimer = false;
 eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function (event) {
     let raw_data = event.data;
-    console.log("Hidden Danger People: ", raw_data);
+    // console.log("Hidden Danger People: ", raw_data);
 
     if (raw_data === "HiddenDangerPeople" && !isTurnOn) {
         leftInterval = ts.activateTurnSignal('left');
         rightInterval = ts.activateTurnSignal('right');
         isTurnOn = true;
-        console.log("Activate Turn Signals");
+        // console.log("Activate Turn Signals");
     } else if (raw_data === "Safe" && isTurnOn && !isTimer) {
         isTimer = true;
         setTimeout(() => {
@@ -80,14 +80,14 @@ eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function 
             ts.inactivateTurnSignal('right', rightInterval);
             isTurnOn = false;
             isTimer = false;
-            console.log("Inactivate Turn Signals after 3 seconds");
+            // console.log("Inactivate Turn Signals after 3 seconds");
         }, 3000);
     }
 });
 
 eventSourceCalculatedAngle.addEventListener("calculated_angle", function (event) {
     let raw_data = event.data;
-    console.log(raw_data);
+    // console.log(raw_data);
 
     if (raw_data === "Safe") {
         wg.inactivateWarningGlowing();
@@ -97,23 +97,25 @@ eventSourceCalculatedAngle.addEventListener("calculated_angle", function (event)
     }
 });
 
+let isUpdate = false;
 eventSourceVersion.addEventListener("version", function (event) {
     let raw_data = event.data;
     console.log(raw_data);
 
-    if (raw_data === "-1") {
+    if (raw_data === "-1" && !isUpdate) {
         const firmwareUpdate = document.getElementById('firmware-update');
         firmwareUpdate.classList.toggle('visible');
+        isUpdate = true;
     }
 });
 
 // ---------- close the connection on error ----------
 eventSourceVehicleDynamics.onerror = function (event) {
-    console.log("Error: " + event);
+    // console.log("Error: " + event);
     eventSourceVehicleDynamics.close();
 }
 
 eventSourceHiddenDangerPeople.onerror = function (event) {
-    console.log("Error: " + event);
+    // console.log("Error: " + event);
     eventSourceHiddenDangerPeople.close();
 }
