@@ -54,3 +54,17 @@ workloads:
     runtimeConfig: |
       image: ghcr.io/eclipse-sdv-hackathon-chapter-two/shift2sdv/helloworld:latest
       commandOptions: []
+  parked_car_app:
+    runtime: podman
+    agent: hpc2
+    restartPolicy: NEVER
+    runtimeConfig: |
+      image: ghcr.io/eclipse-sdv-hackathon-chapter-two/shift2sdv/parked_car_app:latest
+      commandOptions: [ "--net=host", "-e", "VIN=42" ,"--ipc=host"]
+  driving_car_app:
+    runtime: podman
+    agent: hpc2
+    restartPolicy: NEVER
+    runtimeConfig: |
+      image: ghcr.io/eclipse-sdv-hackathon-chapter-two/shift2sdv/driving_car_app:latest
+      commandOptions: [ "--net=host", "-e", "VIN=42" ,"--ipc=host"]
