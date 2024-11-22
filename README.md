@@ -339,7 +339,7 @@ The following logs will be written by Ankaios in the `.logs` folder of the main 
 Our camera's recording environment is not always perfectly aligned with the ground. Therefore, we need to build a system capable of predicting the direction of objects in any environment.
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/23533fcc-9946-44ce-b59e-807040ead130" alt="angle" width="400"/>
+  <img src="https://github.com/user-attachments/assets/23533fcc-9946-44ce-b59e-807040ead130" alt="angle" width="550"/>
 </div>
 
 In cases where the recording environment is misaligned, we create a reference line in the middle of the road using two points \(a\) and \(b\) (e.g., \(a(500, 350)\), \(b(420, 670)\) in the image above). The center of the target object is defined as point \(c\). 
