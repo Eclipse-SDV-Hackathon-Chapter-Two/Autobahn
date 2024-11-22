@@ -51,7 +51,9 @@ if __name__ == "__main__":
     # Subscribe part
     yorn_sub.set_callback(callback)
 
-    for i in range(100):
+    time.sleep(10)
+
+    for i in range(10):
         pub.send("-1")
         logger.info("send -1")
         time.sleep(0.1)

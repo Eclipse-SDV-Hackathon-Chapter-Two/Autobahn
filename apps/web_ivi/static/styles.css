@@ -48,7 +48,7 @@ body {
     transform: translate(0%, -260%);
 }
 
-#info-screen {
+/* #info-screen {
     flex: 1;
     text-align: center;
     align-items: center;
@@ -58,7 +58,6 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     max-width: 300px;
     margin: 0 auto;
-    /* transform: translate(0%, -20%); */
 }
 
 .info-content {
@@ -161,7 +160,7 @@ body {
 
 #warning-background.active {
     opacity: 1;
-}
+} */
 
 #firmware-update {
     margin-top: 20px;
@@ -257,13 +256,13 @@ body {
     .row-main {
         flex-direction: column;
     }
-    #speedometer, #torque, #info-screen {
+    #speedometer, #torque /* , #info-screen */ {
         flex: 1;
     }
-    #turn-signals {
+    /* #turn-signals {
         margin: 20px auto;
     }
     #firmware-update {
         margin: 20px auto;
-    }
+    } */
 }

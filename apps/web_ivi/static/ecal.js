@@ -1,7 +1,7 @@
 import * as vd from './vehicle-dynamics.js';
-import * as ts from './turn-signals.js';
-import * as wg from './warning-glowing.js';
-import * as is from './info-screen.js';
+// import * as ts from './turn-signals.js';
+// import * as wg from './warning-glowing.js';
+// import * as is from './info-screen.js';
 
 // ---------- read from server-side event ----------
 // vehicle-dynamics
@@ -11,17 +11,17 @@ eventSourceVehicleDynamics.onopen = function (_event) {
     console.log("Connection to /vehicle-dynamics opened");
 }
 
-const eventSourceHiddenDangerPeople = new EventSource("/hidden_danger_people");
+// const eventSourceHiddenDangerPeople = new EventSource("/hidden_danger_people");
 
-eventSourceHiddenDangerPeople.onopen = function (_event) {
-    console.log("Connection to /hidden_danger_people opened");
-}
+// eventSourceHiddenDangerPeople.onopen = function (_event) {
+//     console.log("Connection to /hidden_danger_people opened");
+// }
 
-const eventSourceCalculatedAngle = new EventSource("/calculated_angle");
+// const eventSourceCalculatedAngle = new EventSource("/calculated_angle");
 
-eventSourceCalculatedAngle.onopen = function (_event) {
-    console.log("Connection to /calculated_angle opened");
-}
+// eventSourceCalculatedAngle.onopen = function (_event) {
+//     console.log("Connection to /calculated_angle opened");
+// }
 
 const eventSourceVersion = new EventSource("/version");
 
@@ -61,41 +61,41 @@ eventSourceVehicleDynamics.addEventListener("vehicle-dynamics", function (event)
     is.updateEstimatedRange(totalDistance);
 });
 
-let isTurnOn = false;
-let leftInterval, rightInterval;
-let isTimer = false;
-eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function (event) {
-    let raw_data = event.data;
-    // console.log("Hidden Danger People: ", raw_data);
+// let isTurnOn = false;
+// let leftInterval, rightInterval;
+// let isTimer = false;
+// eventSourceHiddenDangerPeople.addEventListener("hidden_danger_people", function (event) {
+//     let raw_data = event.data;
+//     // console.log("Hidden Danger People: ", raw_data);
 
-    if (raw_data === "HiddenDangerPeople" && !isTurnOn) {
-        leftInterval = ts.activateTurnSignal('left');
-        rightInterval = ts.activateTurnSignal('right');
-        isTurnOn = true;
-        // console.log("Activate Turn Signals");
-    } else if (raw_data === "Safe" && isTurnOn && !isTimer) {
-        isTimer = true;
-        setTimeout(() => {
-            ts.inactivateTurnSignal('left', leftInterval);
-            ts.inactivateTurnSignal('right', rightInterval);
-            isTurnOn = false;
-            isTimer = false;
-            // console.log("Inactivate Turn Signals after 3 seconds");
-        }, 3000);
-    }
-});
+//     if (raw_data === "HiddenDangerPeople" && !isTurnOn) {
+//         leftInterval = ts.activateTurnSignal('left');
+//         rightInterval = ts.activateTurnSignal('right');
+//         isTurnOn = true;
+//         // console.log("Activate Turn Signals");
+//     } else if (raw_data === "Safe" && isTurnOn && !isTimer) {
+//         isTimer = true;
+//         setTimeout(() => {
+//             ts.inactivateTurnSignal('left', leftInterval);
+//             ts.inactivateTurnSignal('right', rightInterval);
+//             isTurnOn = false;
+//             isTimer = false;
+//             // console.log("Inactivate Turn Signals after 3 seconds");
+//         }, 3000);
+//     }
+// });
 
-eventSourceCalculatedAngle.addEventListener("calculated_angle", function (event) {
-    let raw_data = event.data;
-    // console.log(raw_data);
+// eventSourceCalculatedAngle.addEventListener("calculated_angle", function (event) {
+//     let raw_data = event.data;
+//     // console.log(raw_data);
 
-    if (raw_data === "Safe") {
-        wg.inactivateWarningGlowing();
-    } else if (true) {
-        let angle = parseInt(raw_data);
-        wg.activateWarningGlowing(angle);
-    }
-});
+//     if (raw_data === "Safe") {
+//         wg.inactivateWarningGlowing();
+//     } else if (true) {
+//         let angle = parseInt(raw_data);
+//         wg.activateWarningGlowing(angle);
+//     }
+// });
 
 let isUpdate = false;
 eventSourceVersion.addEventListener("version", function (event) {
