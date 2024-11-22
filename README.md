@@ -132,24 +132,10 @@ Our project leverages cutting-edge tools and frameworks to achieve our goals:
 ### 🏗 Overview Diagram
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/3a18bdf7-e928-4b56-9a66-6de6388bb336
-  " alt="architecture" width="500"/>
+  <img src="https://github.com/user-attachments/assets/3a18bdf7-e928-4b56-9a66-6de6388bb336" alt="architecture" width="500"/>
 </div>
 
 ---
----
----
----
-
-
-
-
-
-
-
-
-
-
 
 
 
