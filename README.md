@@ -95,10 +95,16 @@ Our solution is divided into **Feature Parts** and **Connectivity Parts**, empha
   - Upon approval from the owner, the system performs the upgrade seamlessly, ensuring the latest features are applied.
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/d98f79ff-5309-44a4-a203-26752f9d0f89" alt="OTA" width="500"/>
+  <img src="https://github.com/user-attachments/assets/d98f79ff-5309-44a4-a203-26752f9d0f89" alt="OTA-AI" width="500"/>
 </div>
-
-
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/0efd8f92-9c2a-4917-93e2-b6471d8d5727" alt="OTA" width="500"/>
+</div>
+<div align="center"> OTA Architecture
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1eb2c8f6-8583-4c65-b5a7-c8ddc05be7c7" alt="OTAGIF" width="500"/>
+</div>
+<div align="center"> OTA Simulation
 ---
 
 
@@ -128,24 +134,16 @@ Our project leverages cutting-edge tools and frameworks to achieve our goals:
 
 
 ## **6. Architecture**
+
 ### 🏗 Overview Diagram
 
-*(Include a simple architecture diagram that shows detection, alert systems, OTA updates, and communication layers. Use tools like Draw.io or Lucidchart.)*
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/3a18bdf7-e928-4b56-9a66-6de6388bb336" alt="architecture" width="500"/>
+</div>
+
+The name of Decision Maker's workload is "example_app"
 
 ---
----
----
----
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -346,7 +344,29 @@ In cases where the recording environment is misaligned, we create a reference li
 
 Using our angle calculation algorithm, the object's direction is computed and sent to subscribers. If line \(bc\) is clockwise relative to \(ab\), a positive value is sent; otherwise, a negative value is sent.
 
+# Simulation
+## Hidden Danger People
 
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/cf6a7dfb-8557-488b-b5e4-45986418b0e0" alt="pedestrian" width="550"/>
+</div>
+
+<div align="center">video data
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/fc74eb59-ff97-442b-a2a2-67e086db110f" alt="redalert" width="550"/>
+</div>
+<div align="center">when person detected
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/63bc5179-9094-4e27-8397-9e2503c353a3" alt="indicator" width="550"/>
+</div>
+<div align="center">Hidden dange people detected
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/123080a8-6e7c-4001-87a0-426b62edcc5a" alt="warning_sign" width="550"/>
+</div>
+<div align="center">When received warning sign
 
 
 # <div align="center">Developers</div>
