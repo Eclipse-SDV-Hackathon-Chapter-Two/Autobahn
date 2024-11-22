@@ -26,20 +26,6 @@ stdout.setLevel(logging.INFO)
 logger.addHandler(stdout)
 logger.setLevel(logging.INFO)
 
-
-CLASS_LABELS = {
-    0: "person",
-    1: "bicycle",
-    2: "car",
-    3: "motorcycle",
-    5: "bus",
-    6: "train",
-    7: "truck",
-    9: "traffic light",
-    11: "stop sign",
-    12: "parking meter",
-}
-
 global_result_set = []
 
 # Callback for receiving messages
@@ -49,8 +35,6 @@ def object_raw_sub_callback(topic_name, msg, time):
         json_msg = json.loads(msg)
         global_result_set = reorganize_yolo_json(json_msg)
         
-    except json.JSONDecodeError:
-        logger.error(f"Error: Could not decode message: '{msg}'")
     except Exception as e:
         logger.error(f"Error: {e}")
 
@@ -65,41 +49,41 @@ if __name__ == "__main__":
     # Set the Callback
     sub.set_callback(object_raw_sub_callback)
 
-
-    # Create a publisher that listens on the "object_detection_class"
+    # Create a publisher that listens on the "people_in_roi"
     pub = StringPublisher("people_in_roi")
 
-    # Just don't exit
     try:
         while ecal_core.ok():
             if global_result_set:
-                result_set = global_result_set  # Only publish if we have received class IDs
-                for entry in result_set:
+                for entry in global_result_set:
                     class_id, confidence, bbox = entry
                     center_x, below_y =  bbox_centerpoint(bbox)
                     center_below_point = (center_x, below_y)
 
-                    if IsPointInROI(center_below_point, roi_points = [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]) is True \
-                        and confidence > 0.1:
-                        in_roi_msg = 1
-                        pub.send(in_roi_msg)
-                        # logger.info(f"Published: {in_roi_msg}")
+                    if IsPointInROI(center_below_point, roi_points = [(0, 600),(0, 350), (450, 250), (550, 250), (1100, 720)]) and confidence >= 0.5:
+                        pub.send("PeopleInRoi")
+
+                        # Log inspection
+                        # logger.info(f"Published: PeopleInRoi")
                     else:
-                        in_roi_msg = 0
-                        pub.send(in_roi_msg)
+                        pub.send("Safe")
+
+                        # Log inspection
+                        # logger.info("Object detected but Safe")
                 
             else:
-                in_roi_msg = 0
-                pub.send(in_roi_msg)
-                # logger.info("No class IDs to publish yet.")
+                pub.send("Safe")
+                
+                # Log inspection
+                # logger.info("No Object")
+            
+            global_result_set = []
 
             # Wait before the next loop
             time.sleep(0.1)
 
     except KeyboardInterrupt:
         pass
-        # logger.info("Application stopped by user.")
 
-    
     # finalize eCAL API
     ecal_core.finalize()
