@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+requests                # HTTP 요청 (파일 다운로드)
+aiofiles                # 비동기 파일 작업
+boto3==1.28.85
