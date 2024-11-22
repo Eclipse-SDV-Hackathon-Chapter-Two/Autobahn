@@ -128,9 +128,13 @@ Our project leverages cutting-edge tools and frameworks to achieve our goals:
 
 
 ## **6. Architecture**
+
 ### 🏗 Overview Diagram
 
-*(Include a simple architecture diagram that shows detection, alert systems, OTA updates, and communication layers. Use tools like Draw.io or Lucidchart.)*
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/3a18bdf7-e928-4b56-9a66-6de6388bb336
+  " alt="OTA" width="500"/>
+</div>
 
 ---
 ---
