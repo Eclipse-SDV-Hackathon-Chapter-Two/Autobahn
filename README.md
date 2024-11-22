@@ -65,6 +65,8 @@ Our solution is divided into **Feature Parts** and **Connectivity Parts**, empha
   <img src="diagrams/context.drawio.svg" alt="Context View" width="600"/>
 </div>
 
+
+
 ### Feature Parts ###
 #### **1. Detection:**
 - Pedestrians or cyclists entering the vehicle's ROI (Region of Interest) are detected using a **YOLO model**.
@@ -331,6 +333,92 @@ The following logs will be written by Ankaios in the `.logs` folder of the main 
 * ank-agent-hpc2
 * 
 
-### Recordings
+# How To Use
 
-- Highway: https://we.tl/t-ug25UpqwR0 (expires Nov 23, 2024)
+### Calculate Angle
+Our camera's recording environment is not always perfectly aligned with the ground. Therefore, we need to build a system capable of predicting the direction of objects in any environment.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1fa460ea-dbde-4a7e-819f-68be766878de" alt="alert" width="400"/>
+</div>
+
+In cases where the recording environment is misaligned, we create a reference line in the middle of the road using two points \(a\) and \(b\) (e.g., \(a(500, 350)\), \(b(420, 670)\) in the image above). The center of the target object is defined as point \(c\). 
+
+Using our angle calculation algorithm, the object's direction is computed and sent to subscribers. If line \(bc\) is clockwise relative to \(ab\), a positive value is sent; otherwise, a negative value is sent.
+
+
+
+
+# <div align="center">Developers</div>
+### <div align="center">Connectivity Part</div>
+<table align="center">
+
+  <tr>
+    <td align="center">
+      <a href="https://github.com/jwoon0906">
+        <img src="https://github.com/jwoon0906.png" width="150px;" alt="Jang-Woon Park"/>
+        <br />
+        <sub><b>Jang-Woon Park</b></sub>
+      </a>
+      <br />
+      <a href="https://github.com/jwoon0906"><img src="https://img.shields.io/badge/GitHub-jwoon0906-blue?logo=github" alt="GitHub Badge" /></a>
+      <br />
+    </td>
+    <td align="center">
+      <a href="https://github.com/johook">
+        <img src="https://github.com/johook.png" width="150px;
+        " alt="Seok-Hun Cho"/>
+        <br />
+        <sub><b>Seok-Hun Cho</b></sub>
+      </a>
+      <br />
+      <a href="https://github.com/johook"><img src="https://img.shields.io/badge/GitHub-johook-blue?logo=github" alt="GitHub Badge" /></a>
+      <br />
+    </td>
+    
+  </tr>
+</table>
+
+### <div align="center">Feature Part</div>
+<table align="center">
+
+  <tr>
+    <td align="center">
+      <a href="https://github.com/euiseok-shin">
+        <img src="https://github.com/euiseok-shin.png" width="150px;" alt="Eui-Seok Shin"/>
+        <br />
+        <sub><b>Eui-Seok Shin</b></sub>
+      </a>
+      <br />
+      <a href="https://github.com/euiseok-shin"><img src="https://img.shields.io/badge/GitHub-euiseokshin-blue?logo=github" alt="GitHub Badge" /></a>
+      <br />
+    </td>
+    <td align="center">
+      <a href="https://github.com/KunhoPark-Jason">
+        <img src="https://github.com/KunhoPark-Jason.png" width="150px;" alt="Kun-Ho Park"/>
+        <br />
+        <sub><b>Kun-Ho Park</b></sub>
+      </a>
+      <br />
+      <a href="https://github.com/KunhoPark-Jason"><img src="https://img.shields.io/badge/GitHub-KunhoParkJason-blue?logo=github" alt="GitHub Badge" /></a>
+      <br />
+    </td>
+    
+  </tr>
+</table>
+
+### <div align="center">UI Design</div>
+<table align="center">
+
+  <tr>
+    <td align="center">
+      <a href="https://github.com/junspring">
+        <img src="https://github.com/junspring.png" width="150px;" alt="Jun-Beom Jung"/>
+        <br />
+        <sub><b>Jun-Beom Jung</b></sub>
+      </a>
+      <br />
+      <a href="https://github.com/junspring"><img src="https://img.shields.io/badge/GitHub-junspring-blue?logo=github" alt="GitHub Badge" /></a>
+      <br />
+    </td>
+  </table>
