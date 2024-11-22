@@ -5,10 +5,10 @@
 # https://www.apache.org/licenses/LICENSE-2.0.
 
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 # SPDX-License-Identifier: Apache-2.0
 
@@ -19,16 +19,16 @@ from ecal.core.subscriber import StringSubscriber
 from ecal.core.publisher import StringPublisher
 from decision_functions import HiddenDangerPeople, IsPointInROI
 from utils import reorganize_yolo_json, bbox_centerpoint, calculate_signed_angle
-import paho.mqtt.client as mqtt
+# import paho.mqtt.client as mqtt
 
-
+# Logging setup
 logger = logging.getLogger("example_app")
 stdout = logging.StreamHandler(stream=sys.stdout)
 stdout.setLevel(logging.INFO)
 logger.addHandler(stdout)
 logger.setLevel(logging.INFO)
 
-
+# Class labels for object detection
 CLASS_LABELS = {
     0: "person",
     1: "bicycle",
@@ -44,35 +44,29 @@ CLASS_LABELS = {
 
 global_result_set = []
 
-# Callback for receiving messages
+# Callback for object detection messages
 def object_raw_sub_callback(topic_name, msg, time):
     global global_result_set
     try:
         json_msg = json.loads(msg)
         global_result_set = reorganize_yolo_json(json_msg)
-        
     except json.JSONDecodeError:
         logger.error(f"Error: Could not decode message: '{msg}'")
     except Exception as e:
         logger.error(f"Error: {e}")
 
-BROKER_ADDRESS = "test.mosquitto.org"  # 공개 테스트 브로커
+# MQTT settings
+BROKER_ADDRESS = "test.mosquitto.org"  # Public MQTT broker
 PORT = 1883
 TOPIC = "test/shshsh"
 
-
-
+# Function to publish a warning message via MQTT
 def publish_message():
-    # 클라이언트 생성
-    client = mqtt.Client()
-    # 브로커 연결
-    client.connect(BROKER_ADDRESS, PORT, 60)
-    
-    # 메시지 발행
+    client = mqtt.Client()  # Create MQTT client
+    client.connect(BROKER_ADDRESS, PORT, 60)  # Connect to the broker
     message = "warning"
-    client.publish(TOPIC, message)
+    client.publish(TOPIC, message)  # Publish the message
     print(f"Message sent: {message}")
-    
 
 if __name__ == "__main__":
     logger.info("Starting example app...")
@@ -80,43 +74,42 @@ if __name__ == "__main__":
     # Initialize eCAL
     ecal_core.initialize(sys.argv, "Object_Detection_arbiter")
 
-    # Create a subscriber that listens on the "object_detection"
+    # Subscriber for object detection
     sub = StringSubscriber("object_detection")
-    # Set the Callback
     sub.set_callback(object_raw_sub_callback)
 
-
-    
-    # Create a publisher that listens on the "object_detection_class"
+    # Publisher for hidden danger status
     pub_hidden_danger_people = StringPublisher("hidden_danger_people")
-    # pub_calculated_angle = StringPublisher("calculated_angle")
-    # pub_people_in_roi = StringPublisher("people_in_roi")
 
-    # Just don't exit
     try:
         while ecal_core.ok():
             if global_result_set:
-                result_set = global_result_set  # Only publish if we have received class IDs
+                result_set = global_result_set  # Use only if we received valid data
 
-                if HiddenDangerPeople(result_set) == "danger": # and speed == 0
-                    
+                # Check for hidden danger and publish status
+                if HiddenDangerPeople(result_set) == "danger":  # Example condition
                     pub_hidden_danger_people.send("HiddenDangerPeople")
-                    # publish_message()
+
+                    # Log inspection
+                    # logger.info("HiddenDangerPeople")
+
                 else:
                     pub_hidden_danger_people.send("Safe")
-                
+
+                    # Log inspection
+                    # logger.info("No class IDs to publish yet.")
+
             else:
-                pub_hidden_danger_people.send("Safe")
-                
+                pub_hidden_danger_people.send("Safe")  # Default to safe
+
+                # Log inspection
                 # logger.info("No class IDs to publish yet.")
 
-            # Wait before the next loop
+            # Wait before next iteration
             time.sleep(0.1)
 
     except KeyboardInterrupt:
         pass
-        # logger.info("Application stopped by user.")
 
-    #client.disconnect()
-    # finalize eCAL API
+    # Finalize eCAL API
     ecal_core.finalize()
