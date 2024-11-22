@@ -101,8 +101,10 @@ Our solution is divided into **Feature Parts** and **Connectivity Parts**, empha
   <img src="https://github.com/user-attachments/assets/0efd8f92-9c2a-4917-93e2-b6471d8d5727" alt="OTA" width="500"/>
 </div>
 <div align="center"> OTA Architecture
-
-
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1eb2c8f6-8583-4c65-b5a7-c8ddc05be7c7" alt="OTAGIF" width="500"/>
+</div>
+<div align="center"> OTA Simulation
 ---
 
 
