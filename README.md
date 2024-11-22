@@ -135,6 +135,8 @@ Our project leverages cutting-edge tools and frameworks to achieve our goals:
   <img src="https://github.com/user-attachments/assets/3a18bdf7-e928-4b56-9a66-6de6388bb336" alt="architecture" width="500"/>
 </div>
 
+The name of Decision Maker's workload is "example_app"
+
 ---
 
 
@@ -335,6 +337,22 @@ Our camera's recording environment is not always perfectly aligned with the grou
 In cases where the recording environment is misaligned, we create a reference line in the middle of the road using two points \(a\) and \(b\) (e.g., \(a(500, 350)\), \(b(420, 670)\) in the image above). The center of the target object is defined as point \(c\). 
 
 Using our angle calculation algorithm, the object's direction is computed and sent to subscribers. If line \(bc\) is clockwise relative to \(ab\), a positive value is sent; otherwise, a negative value is sent.
+
+# Simulation
+## Hidden Danger People
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/cf6a7dfb-8557-488b-b5e4-45986418b0e0" alt="pedestrian" width="550"/>
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/fc74eb59-ff97-442b-a2a2-67e086db110f" alt="redalert" width="550"/>
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/63bc5179-9094-4e27-8397-9e2503c353a3" alt="indicator" width="550"/>
+</div>
+
 
 
 
